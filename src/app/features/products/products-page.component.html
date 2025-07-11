@@ -1,0 +1,14 @@
+<select (change)="onCategoryChange($event)">
+  <option value="">All categories</option>
+  <option *ngFor="let category of categories()" [value]="category.name">
+    {{ category.name }}
+  </option>
+</select>
+
+<div class="products">
+  <div *ngFor="let product of filteredProducts()" class="product-card">
+    <h3>{{ product.title }}</h3>
+    <p>{{ product.description }}</p>
+    <p><strong>Price:</strong> {{ product.price }} грн</p>
+  </div>
+</div>
