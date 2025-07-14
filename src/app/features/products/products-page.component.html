@@ -5,8 +5,8 @@
   <mat-label>Категорія</mat-label>
   <mat-select [value]="selectedCategory()" (selectionChange)="onCategoryChange($event.value)">
     <mat-option [value]="null">Усі категорії</mat-option>
-    <mat-option *ngFor="let category of categories()" [value]="category.name">
-      {{ category.name }}
+    <mat-option *ngFor="let category of categories()" [value]="category">
+      {{ category }}
     </mat-option>
   </mat-select>
 </mat-form-field>

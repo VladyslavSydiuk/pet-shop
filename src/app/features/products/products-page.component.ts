@@ -4,6 +4,7 @@ import {MaterialModule} from '../../shared/material.module';
 import {ProductService} from '../../core/services/product.service';
 import {CategoryService} from '../../core/services/category.service';
 import { MatSelectModule } from '@angular/material/select';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   trigger,
   transition,
@@ -29,8 +30,8 @@ export class ProductsPageComponent {
   private productService = inject(ProductService);
   private categoryService = inject(CategoryService);
 
-  products = this.productService.getProducts();
-  categories = this.categoryService.getCategories()
+  products = toSignal(this.productService.getProducts(), {initialValue: []});
+  categories = toSignal(this.categoryService.getUniqueCategories(), {initialValue: []});
 
   //signal to save currently selected category
   selectedCategory = signal<string | null>(null);
