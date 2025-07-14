@@ -1,14 +1,28 @@
-<select (change)="onCategoryChange($event)">
-  <option value="">All categories</option>
-  <option *ngFor="let category of categories()" [value]="category.name">
-    {{ category.name }}
-  </option>
-</select>
+<h1>Список товарів</h1>
 
-<div class="products">
-  <div *ngFor="let product of filteredProducts()" class="product-card">
-    <h3>{{ product.title }}</h3>
-    <p>{{ product.description }}</p>
-    <p><strong>Price:</strong> {{ product.price }} грн</p>
-  </div>
-</div>
+<!-- Селектор категорій -->
+<mat-form-field appearance="fill" class="category-select">
+  <mat-label>Категорія</mat-label>
+  <mat-select [value]="selectedCategory()" (selectionChange)="onCategoryChange($event.value)">
+    <mat-option [value]="null">Усі категорії</mat-option>
+    <mat-option *ngFor="let category of categories()" [value]="category.name">
+      {{ category.name }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<!-- Список продуктів -->
+<ul class="product-list">
+  <li *ngFor="let product of filteredProducts()">
+    <div class="product-card" @fadeIn>
+      <h3 class="product-title">{{ product.title }}</h3>
+
+      <div class="product-info">
+        <span class="price">{{ product.price }} грн</span>
+        <span class="rating">⭐⭐⭐⭐☆</span>
+      </div>
+
+      <button mat-raised-button color="primary">Купити</button>
+    </div>
+  </li>
+</ul>
