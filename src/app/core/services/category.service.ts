@@ -32,17 +32,3 @@ export class CategoryService{
     return this.http.get<Category>(`${this.apiUrl}/${id}`);
   }
 }
-
-// Приклад інтерфейсу Product для FakeStoreAPI (можете додати у product.model.ts)
-// export interface Product {
-//   id: number;
-//   title: string;
-//   price: number;
-//   description: string;
-//   category: string; // FakeStoreAPI повертає категорію як рядок
-//   image: string;
-//   rating: {
-//     rate: number;
-//     count: number;
-//   };
-// }

@@ -5,6 +5,7 @@ import {ProductService} from '../../core/services/product.service';
 import {CategoryService} from '../../core/services/category.service';
 import { MatSelectModule } from '@angular/material/select';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
 import {
   trigger,
   transition,
@@ -14,7 +15,7 @@ import {
 
 @Component({
   selector: 'app-products-page',
-  imports: [CommonModule, MaterialModule,MatSelectModule],
+  imports: [CommonModule, MaterialModule, MatSelectModule, FormsModule],
   templateUrl: './products-page.component.html',
   styleUrl: './products-page.component.scss',
   animations: [
@@ -30,6 +31,9 @@ export class ProductsPageComponent {
   private productService = inject(ProductService);
   private categoryService = inject(CategoryService);
 
+  // Змінюємо на звичайну властивість для роботи з ngModel
+  searchQuery = '';
+
   products = toSignal(this.productService.getProducts(), {initialValue: []});
   categories = toSignal(this.categoryService.getUniqueCategories(), {initialValue: []});
 
@@ -38,12 +42,19 @@ export class ProductsPageComponent {
 
   filteredProducts = computed(() => {
     const selected = this.selectedCategory();
-    return selected
-      ? this.products().filter(product => product.category === selected)
-      : this.products();
+    const search = this.searchQuery.toLowerCase();
+
+    return this.products().filter(product =>
+      (!selected || product.category === selected) &&
+      (!search || product.title.toLowerCase().includes(search))
+    );
   });
 
-  onCategoryChange(category: string) {
-    this.selectedCategory.set(category || null);
+  onCategoryChange(category: string | null) {
+    this.selectedCategory.set(category);
+  }
+
+  updateSearchQuery(query: string) {
+    this.searchQuery = query;
   }
 }

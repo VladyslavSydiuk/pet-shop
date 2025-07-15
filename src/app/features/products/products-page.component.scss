@@ -1,65 +1,177 @@
+.marketplace-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-header {
+  background-color: #212121;
+  color: white;
+  padding: 1rem 0;
+  width: 100%;
+}
+
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  width: 100%;
+}
+
+.header-top {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  h1 {
+    margin: 0;
+    font-size: 1.8rem;
+  }
+}
+
+.search-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  border-radius: 4px;
+}
+
+.search-field {
+  width: calc(100% - 240px);
+  max-width: 800px;
+  border-radius: 4px;
+
+  // Впливаємо на внутрішні елементи Angular Material
+  ::ng-deep {
+    // Прибираємо лінію під полем
+    .mat-mdc-form-field .mdc-line-ripple {
+      display: none !important;
+    }
+
+    // Прибираємо псевдоелемент, який створює лінію
+    .mdc-line-ripple::before,
+    .mdc-line-ripple::after,
+    .mdc-line-ripple--deactivating::before,
+    .mdc-line-ripple--deactivating::after {
+      display: none !important;
+      background-color: transparent !important;
+      opacity: 0 !important;
+      content: none !important;
+    }
+
+    // Робимо фон білим і згладжуємо кути
+    .mat-mdc-text-field-wrapper,
+    .mat-mdc-form-field-flex {
+      background-color: white;
+      border-radius: 4px;
+    }
+
+    // Прибираємо нижню допоміжну підписку
+    .mat-mdc-form-field-subscript-wrapper {
+      display: none;
+    }
+
+    // Додаткова спроба прибрати нижню лінію
+    .mat-mdc-form-field-underline {
+      display: none !important;
+    }
+  }
+}
+
+
+.content {
+  display: flex;
+  flex: 1;
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.category-sidebar {
+  width: 220px;
+  background-color: #f5f5f5;
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-right: 1px solid #ddd;
+
+  button {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    text-align: left;
+    justify-content: flex-start;
+    background-color: #fff;
+
+    &.active {
+      background-color: #1976d2;
+      color: white;
+    }
+
+    &:hover {
+      background-color: #e3f2fd;
+    }
+  }
+}
+
+.product-area {
+  flex: 1;
+  padding: 2rem;
+  padding-top: 4rem;
+}
+
 .product-list {
+  margin-top: 2rem;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  grid-auto-rows: 1fr;
-  gap: 3rem;
+  gap: 3rem; /* Це 2rem = приблизно 32px відступ */
   list-style: none;
+  margin: 0;
   padding: 0;
-  margin: 0 auto;
 }
+
 .product-card {
-  min-height: 100%;
+  row-gap: 1rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   background-color: white;
   padding: 1.2rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   height: 100%;
 
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 4px 20px rgba(41, 28, 28, 0.12);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
-}
 
-.product-list li {
-  display: block;
-  height: 100%;
-}
+  .product-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 0.8rem;
+  }
 
+  .product-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    margin-bottom: 1rem;
+  }
 
-li {
-  height: 100%;
-}
+  .price {
+    color: #2e7d32;
+    font-weight: bold;
+  }
 
-.product-title {
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin: 0 0 0.5rem 0;
-}
+  .rating {
+    color: #fbc02d;
+  }
 
-.product-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.95rem;
-  color: #666;
-  margin-bottom: auto; // push button to bottom
-}
-
-.price {
-  color: #2e7d32;
-  font-weight: bold;
-}
-
-.rating {
-  color: #fbc02d;
-}
-
-button {
-  margin-top: 1rem;
-  align-self: flex-start;
+  button {
+    align-self: flex-start;
+  }
 }

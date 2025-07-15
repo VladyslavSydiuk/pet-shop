@@ -1,28 +1,53 @@
-<h1>Список товарів</h1>
-
-<!-- Селектор категорій -->
-<mat-form-field appearance="fill" class="category-select">
-  <mat-label>Категорія</mat-label>
-  <mat-select [value]="selectedCategory()" (selectionChange)="onCategoryChange($event.value)">
-    <mat-option [value]="null">Усі категорії</mat-option>
-    <mat-option *ngFor="let category of categories()" [value]="category">
-      {{ category }}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
-
-<!-- Список продуктів -->
-<ul class="product-list">
-  <li *ngFor="let product of filteredProducts()">
-    <div class="product-card" @fadeIn>
-      <h3 class="product-title">{{ product.title }}</h3>
-
-      <div class="product-info">
-        <span class="price">{{ product.price }} грн</span>
-        <span class="rating">⭐⭐⭐⭐☆</span>
+<div class="marketplace-layout">
+  <header class="app-header">
+    <div class="container">
+      <div class="header-top">
+        <h1>Marketplace</h1>
       </div>
-
-      <button mat-raised-button color="primary">Купити</button>
+      <div class="search-container">
+        <mat-form-field class="search-field" appearance="fill">
+          <mat-label>Пошук товару</mat-label>
+          <input matInput [(ngModel)]="searchQuery" placeholder="Введіть назву">
+        </mat-form-field>
+      </div>
     </div>
-  </li>
-</ul>
+  </header>
+
+  <div class="content">
+    <!-- Лівий вертикальний дашборд -->
+    <aside class="category-sidebar">
+      <button
+        mat-button
+        [class.active]="selectedCategory() === null"
+        (click)="onCategoryChange(null)"
+      >
+        Усі
+      </button>
+
+      <button
+        mat-button
+        *ngFor="let category of categories()"
+        [class.active]="selectedCategory() === category"
+        (click)="onCategoryChange(category)"
+      >
+        {{ category }}
+      </button>
+    </aside>
+
+    <!-- Список товарів -->
+    <main class="product-area">
+      <ul class="product-list">
+        <li *ngFor="let product of filteredProducts()">
+          <div class="product-card" @fadeIn>
+            <h3 class="product-title">{{ product.title }}</h3>
+            <div class="product-info">
+              <span class="price">{{ product.price }} грн</span>
+              <span class="rating">⭐⭐⭐⭐☆</span>
+            </div>
+            <button mat-raised-button color="primary">Купити</button>
+          </div>
+        </li>
+      </ul>
+    </main>
+  </div>
+</div>
