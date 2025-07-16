@@ -31,8 +31,11 @@ export class ProductsPageComponent {
   private productService = inject(ProductService);
   private categoryService = inject(CategoryService);
 
-  // Змінюємо на звичайну властивість для роботи з ngModel
-  searchQuery = '';
+  // Property for ngModel binding
+  searchValue = '';
+
+  // Signal for reactivity
+  searchQuery = signal('');
 
   products = toSignal(this.productService.getProducts(), {initialValue: []});
   categories = toSignal(this.categoryService.getUniqueCategories(), {initialValue: []});
@@ -42,7 +45,7 @@ export class ProductsPageComponent {
 
   filteredProducts = computed(() => {
     const selected = this.selectedCategory();
-    const search = this.searchQuery.toLowerCase();
+    const search = this.searchQuery().toLowerCase();
 
     return this.products().filter(product =>
       (!selected || product.category === selected) &&
@@ -55,6 +58,6 @@ export class ProductsPageComponent {
   }
 
   updateSearchQuery(query: string) {
-    this.searchQuery = query;
+    this.searchQuery.set(query);
   }
 }
