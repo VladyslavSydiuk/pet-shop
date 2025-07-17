@@ -6,7 +6,7 @@ import {Observable} from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class ProductService {
 
-  private readonly apiUrl = 'https://fakestoreapi.com/products';
+  private readonly apiUrl = 'http://localhost:8080/products';
 
   constructor(private http: HttpClient) {}
 

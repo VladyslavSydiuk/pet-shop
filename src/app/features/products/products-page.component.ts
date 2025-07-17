@@ -49,7 +49,7 @@ export class ProductsPageComponent {
 
     return this.products().filter(product =>
       (!selected || product.category === selected) &&
-      (!search || product.title.toLowerCase().includes(search))
+      (!search || product.productName.toLowerCase().includes(search))
     );
   });
 
