@@ -19,15 +19,17 @@
 }
 
 .header-top {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
+  display: flex; /* Включаємо flexbox для батьківського контейнера */
+  justify-content: space-between; /* Розміщуємо елементи по краях, з простором між ними */
+  align-items: center; /* Вирівнюємо елементи по центру вертикально */
   margin-bottom: 1rem;
+  width: 100%; /* Додаємо, щоб space-between мав ефект */
+}
 
-  h1 {
-    margin: 0;
-    font-size: 1.8rem;
-  }
+
+.header-top h1 { /* Залишаємо стилі для h1 */
+  margin: 0;
+  font-size: 1.8rem;
 }
 
 .search-container {
