@@ -1,22 +1,21 @@
-import {Injectable, signal} from '@angular/core';
-import {Category} from '../models/category.model'; // Це може знадобитися для інших методів, тут не використовується напряму для унікальних категорій
+import {Injectable} from '@angular/core';
+import {Category} from '../models/category.model';
 import {HttpClient} from '@angular/common/http';
-import {Product} from '../models/product.model';
 import {Observable} from 'rxjs';
-import { map } from 'rxjs/operators'; // !!! Важливо імпортувати оператор map
+import { map } from 'rxjs/operators';
 
 @Injectable({providedIn: 'root'})
 export class CategoryService{
 
-  private readonly apiUrl = 'https://fakestoreapi.com/products';
+  private readonly apiUrl = 'http://localhost:8080/categories';
 
   constructor(private http: HttpClient) {}
 
   getUniqueCategories(): Observable<string[]> {
-    return this.http.get<Product[]>(this.apiUrl).pipe(
-      map(products => {
+    return this.http.get<Category[]>(this.apiUrl).pipe(
+      map(categories => {
         // 1. Збираємо всі назви категорій з усіх продуктів
-        const allCategoryNames = products.map(product => product.category);
+        const allCategoryNames = categories.map(category => category.name);
 
         // 2. Використовуємо Set для отримання лише унікальних назв категорій
         const uniqueCategoryNames = new Set(allCategoryNames);

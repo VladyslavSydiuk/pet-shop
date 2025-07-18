@@ -4,7 +4,7 @@ import {MaterialModule} from '../../shared/material.module';
 import {ProductService} from '../../core/services/product.service';
 import {CategoryService} from '../../core/services/category.service';
 import { MatSelectModule } from '@angular/material/select';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toSignal, toObservable } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import {
   trigger,
@@ -12,10 +12,13 @@ import {
   style,
   animate
 } from '@angular/animations';
+import { Product } from '../../core/models/product.model';
+import { switchMap, tap } from 'rxjs/operators';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-products-page',
-  imports: [CommonModule, MaterialModule, MatSelectModule, FormsModule],
+  imports: [CommonModule, MaterialModule, MatSelectModule, FormsModule, MatPaginatorModule],
   templateUrl: './products-page.component.html',
   styleUrl: './products-page.component.scss',
   animations: [
@@ -37,18 +40,40 @@ export class ProductsPageComponent {
   // Signal for reactivity
   searchQuery = signal('');
 
-  products = toSignal(this.productService.getProducts(), {initialValue: []});
+  // Pagination signals
+  pageIndex = signal(0);
+  pageSize = signal(20);
+  totalItems = signal(0);
+
+  // Category signal
+  selectedCategory = signal<string | null>(null);
+
   categories = toSignal(this.categoryService.getUniqueCategories(), {initialValue: []});
 
-  //signal to save currently selected category
-  selectedCategory = signal<string | null>(null);
+  // Create a computed signal that depends on pagination and search values
+  paginationParams = computed(() => ({
+    page: this.pageIndex(),
+    size: this.pageSize()
+  }));
+
+  // Use the computed signal as a dependency to automatically refetch when any parameter changes
+  productsPage = toSignal(
+    toObservable(computed(() => this.paginationParams())).pipe(
+      switchMap(params => this.productService.getProductsPaginated(params.page, params.size)),
+      tap(page => this.totalItems.set(page.totalElements))
+    ),
+    { initialValue: { content: [], totalElements: 0, totalPages: 0, number: 0, size: 20, first: true, last: true, empty: true, pageable: { pageNumber: 0, pageSize: 20, offset: 0, sort: { empty: true, sorted: false, unsorted: true } } } }
+  );
+
+  // Get just the products array from the page
+  products = computed(() => this.productsPage().content);
 
   filteredProducts = computed(() => {
     const selected = this.selectedCategory();
     const search = this.searchQuery().toLowerCase();
 
     return this.products().filter(product =>
-      (!selected || product.category === selected) &&
+      (!selected || product.category.name === selected) &&
       (!search || product.productName.toLowerCase().includes(search))
     );
   });
@@ -59,5 +84,11 @@ export class ProductsPageComponent {
 
   updateSearchQuery(query: string) {
     this.searchQuery.set(query);
+  }
+
+  // Handler for pagination events
+  handlePageEvent(event: PageEvent) {
+    this.pageIndex.set(event.pageIndex);
+    this.pageSize.set(event.pageSize);
   }
 }

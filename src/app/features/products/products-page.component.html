@@ -49,6 +49,18 @@
           </div>
         </li>
       </ul>
+
+      <!-- Pagination Controls -->
+      <div class="pagination-container">
+        <mat-paginator
+          [length]="totalItems()"
+          [pageSize]="pageSize()"
+          [pageIndex]="pageIndex()"
+          [pageSizeOptions]="[5, 10, 20, 50]"
+          (page)="handlePageEvent($event)"
+          aria-label="Select page">
+        </mat-paginator>
+      </div>
     </main>
   </div>
 </div>

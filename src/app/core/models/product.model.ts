@@ -1,3 +1,4 @@
+import {Category} from './category.model';
 
 
 export interface Product {
@@ -6,6 +7,6 @@ export interface Product {
   productName: string;
   price: number;
   productDescription: string;
-  category: string;
+  category: Category;
   avatarUrl: string;
 }
