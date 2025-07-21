@@ -7,7 +7,7 @@ import { map } from 'rxjs/operators';
 @Injectable({providedIn: 'root'})
 export class CategoryService{
 
-  private readonly apiUrl = 'http://localhost:8080/categories';
+  private readonly apiUrl = 'http://localhost:8090/categories';
 
   constructor(private http: HttpClient) {}
 

@@ -13,6 +13,8 @@ import { MaterialModule } from '../../shared/material.module';
 export class ProductDetailPageComponent implements OnInit {
   productId: string | null = null;
 
+
+
   constructor(private route: ActivatedRoute) {}
 
   ngOnInit(): void {

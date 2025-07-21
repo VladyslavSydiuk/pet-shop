@@ -50,36 +50,43 @@ export class ProductsPageComponent {
 
   categories = toSignal(this.categoryService.getUniqueCategories(), {initialValue: []});
 
-  // Create a computed signal that depends on pagination and search values
+  // Create a computed signal that depends on pagination, search, and category values
   paginationParams = computed(() => ({
     page: this.pageIndex(),
-    size: this.pageSize()
+    size: this.pageSize(),
+    categoryName: this.selectedCategory() || 'all'
   }));
 
   // Use the computed signal as a dependency to automatically refetch when any parameter changes
   productsPage = toSignal(
     toObservable(computed(() => this.paginationParams())).pipe(
-      switchMap(params => this.productService.getProductsPaginated(params.page, params.size)),
+      switchMap(params => this.productService.getProductsPaginated(params.page, params.size, params.categoryName)),
       tap(page => this.totalItems.set(page.totalElements))
     ),
     { initialValue: { content: [], totalElements: 0, totalPages: 0, number: 0, size: 20, first: true, last: true, empty: true, pageable: { pageNumber: 0, pageSize: 20, offset: 0, sort: { empty: true, sorted: false, unsorted: true } } } }
   );
 
-  // Get just the products array from the page
+  // Get just the products array from the page - no need for client-side filtering since backend handles it
   products = computed(() => this.productsPage().content);
 
+  // For search functionality, we'll filter on the client side for now
+  // You might want to add search to the backend later
   filteredProducts = computed(() => {
-    const selected = this.selectedCategory();
     const search = this.searchQuery().toLowerCase();
 
+    if (!search) {
+      return this.products();
+    }
+
     return this.products().filter(product =>
-      (!selected || product.category.name === selected) &&
-      (!search || product.productName.toLowerCase().includes(search))
+      product.productName.toLowerCase().includes(search)
     );
   });
 
   onCategoryChange(category: string | null) {
     this.selectedCategory.set(category);
+    // Reset to first page when category changes
+    this.pageIndex.set(0);
   }
 
   updateSearchQuery(query: string) {
