@@ -15,11 +15,16 @@ export class ProductService {
     return this.http.get<Product[]>(this.apiUrl);
   }
 
-  getProductsPaginated(page: number = 0, size: number = 20, categoryName: string = 'all'): Observable<Page<Product>> {
+  getProductsPaginated(page: number = 0, size: number = 20, categoryName: string = 'all', searchTerm?: string): Observable<Page<Product>> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString())
       .set('categoryName', categoryName);
+
+    // Додаємо параметр пошуку лише якщо він не пустий
+    if (searchTerm && searchTerm.trim() !== '') {
+      params = params.set('searchTerm', searchTerm);
+    }
 
     return this.http.get<Page<Product>>(this.apiUrl, { params });
   }

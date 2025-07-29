@@ -13,7 +13,7 @@ import {
   animate
 } from '@angular/animations';
 import { Product } from '../../core/models/product.model';
-import { switchMap, tap } from 'rxjs/operators';
+import { switchMap, tap, debounceTime } from 'rxjs/operators';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 @Component({
@@ -54,34 +54,31 @@ export class ProductsPageComponent {
   paginationParams = computed(() => ({
     page: this.pageIndex(),
     size: this.pageSize(),
-    categoryName: this.selectedCategory() || 'all'
+    categoryName: this.selectedCategory() || 'all',
+    searchTerm: this.searchQuery() // Додаємо пошуковий запит в параметри
   }));
 
   // Use the computed signal as a dependency to automatically refetch when any parameter changes
   productsPage = toSignal(
     toObservable(computed(() => this.paginationParams())).pipe(
-      switchMap(params => this.productService.getProductsPaginated(params.page, params.size, params.categoryName)),
+      debounceTime(300), // Додаємо debounce для зменшення частоти запитів під час швидкого введення
+      switchMap(params => this.productService.getProductsPaginated(
+        params.page,
+        params.size,
+        params.categoryName,
+        params.searchTerm
+      )),
       tap(page => this.totalItems.set(page.totalElements))
     ),
     { initialValue: { content: [], totalElements: 0, totalPages: 0, number: 0, size: 20, first: true, last: true, empty: true, pageable: { pageNumber: 0, pageSize: 20, offset: 0, sort: { empty: true, sorted: false, unsorted: true } } } }
   );
 
-  // Get just the products array from the page - no need for client-side filtering since backend handles it
+  // Отримуємо товари прямо з результату запиту до сервера
   products = computed(() => this.productsPage().content);
 
-  // For search functionality, we'll filter on the client side for now
-  // You might want to add search to the backend later
-  filteredProducts = computed(() => {
-    const search = this.searchQuery().toLowerCase();
-
-    if (!search) {
-      return this.products();
-    }
-
-    return this.products().filter(product =>
-      product.productName.toLowerCase().includes(search)
-    );
-  });
+  // Більше не потрібна фільтрація на клієнті, оскільки вона виконується на сервері
+  // Просто використовуємо products як є
+  filteredProducts = this.products;
 
   onCategoryChange(category: string | null) {
     this.selectedCategory.set(category);
@@ -91,6 +88,8 @@ export class ProductsPageComponent {
 
   updateSearchQuery(query: string) {
     this.searchQuery.set(query);
+    // Reset to first page when search query changes
+    this.pageIndex.set(0);
   }
 
   // Handler for pagination events
