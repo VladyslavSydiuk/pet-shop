@@ -15,6 +15,7 @@ import {
 import { Product } from '../../core/models/product.model';
 import { switchMap, tap, debounceTime } from 'rxjs/operators';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-products-page',
@@ -33,6 +34,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 export class ProductsPageComponent {
   private productService = inject(ProductService);
   private categoryService = inject(CategoryService);
+  private authService = inject(AuthService);
 
   // Property for ngModel binding
   searchValue = '';
@@ -79,6 +81,10 @@ export class ProductsPageComponent {
   // Більше не потрібна фільтрація на клієнті, оскільки вона виконується на сервері
   // Просто використовуємо products як є
   filteredProducts = this.products;
+
+  logout() {
+    this.authService.logout();
+  }
 
   onCategoryChange(category: string | null) {
     this.selectedCategory.set(category);

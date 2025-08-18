@@ -10,6 +10,9 @@
           <input matInput [(ngModel)]="searchValue" (ngModelChange)="updateSearchQuery($event)" placeholder="Введіть назву">
         </mat-form-field>
       </div>
+      <div class="header-actions">
+        <button mat-stroked-button color="warn" (click)="logout()">Logout</button>
+      </div>
     </div>
     </div>
   </header>

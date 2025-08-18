@@ -19,15 +19,14 @@
 }
 
 .header-top {
-  display: flex; /* Включаємо flexbox для батьківського контейнера */
-  justify-content: space-between; /* Розміщуємо елементи по краях, з простором між ними */
-  align-items: center; /* Вирівнюємо елементи по центру вертикально */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 1rem;
-  width: 100%; /* Додаємо, щоб space-between мав ефект */
+  width: 100%;
 }
 
-
-.header-top h1 { /* Залишаємо стилі для h1 */
+.header-top h1 {
   margin: 0;
   font-size: 1.8rem;
 }
@@ -39,19 +38,22 @@
   border-radius: 4px;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+}
+
 .search-field {
   width: calc(100% - 240px);
   max-width: 800px;
   border-radius: 4px;
 
-  // Впливаємо на внутрішні елементи Angular Material
   ::ng-deep {
-    // Прибираємо лінію під полем
     .mat-mdc-form-field .mdc-line-ripple {
       display: none !important;
     }
 
-    // Прибираємо псевдоелемент, який створює лінію
     .mdc-line-ripple::before,
     .mdc-line-ripple::after,
     .mdc-line-ripple--deactivating::before,
@@ -62,21 +64,20 @@
       content: none !important;
     }
 
-    // Робимо фон білим і згладжуємо кути
     .mat-mdc-text-field-wrapper,
     .mat-mdc-form-field-flex {
       background-color: white;
       border-radius: 4px;
     }
 
-    // Прибираємо нижню допоміжну підписку
     .mat-mdc-form-field-subscript-wrapper {
       display: none;
     }
 
-    // Додаткова спроба прибрати нижню лінію
     .mat-mdc-form-field-underline {
       display: none !important;
+
+
     }
   }
 }
@@ -121,16 +122,33 @@
   flex: 1;
   padding: 2rem;
   padding-top: 4rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .product-list {
   margin-top: 2rem;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 3rem; /* Це 2rem = приблизно 32px відступ */
+  gap: 3rem;
   list-style: none;
-  margin: 0;
+  margin: 2rem 0 0;
   padding: 0;
+  margin-bottom: 2rem;
+}
+
+.pagination-container {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.pagination-container mat-paginator[aria-label="Select page"],
+mat-paginator[aria-label="Select page"] {
+  display: block;
+  width: 100%;
+  flex: 0 0 auto;
+  z-index: 0;
 }
 
 .product-card {

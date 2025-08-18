@@ -10,3 +10,4 @@ export interface Product {
   category: Category;
   avatarUrl: string;
 }
+

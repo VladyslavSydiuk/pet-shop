@@ -3,17 +3,20 @@ import {Category} from '../models/category.model';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import { map } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
 @Injectable({providedIn: 'root'})
 export class CategoryService{
 
-  private readonly apiUrl = 'http://localhost:8090/categories';
+  private readonly apiUrl = `${environment.apiBaseUrl}/api/categories`;
 
   constructor(private http: HttpClient) {}
 
   getUniqueCategories(): Observable<string[]> {
     return this.http.get<Category[]>(this.apiUrl).pipe(
       map(categories => {
+
+
         // 1. Збираємо всі назви категорій з усіх продуктів
         const allCategoryNames = categories.map(category => category.name);
 
