@@ -6,6 +6,7 @@ import {CategoryService} from '../../core/services/category.service';
 import { MatSelectModule } from '@angular/material/select';
 import { toSignal, toObservable } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import {
   trigger,
   transition,
@@ -16,10 +17,11 @@ import { Product } from '../../core/models/product.model';
 import { switchMap, tap, debounceTime } from 'rxjs/operators';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { AuthService } from '../../core/services/auth.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-products-page',
-  imports: [CommonModule, MaterialModule, MatSelectModule, FormsModule, MatPaginatorModule],
+  imports: [CommonModule, MaterialModule, MatSelectModule, FormsModule, MatPaginatorModule, RouterModule],
   templateUrl: './products-page.component.html',
   styleUrl: './products-page.component.scss',
   animations: [
@@ -102,5 +104,39 @@ export class ProductsPageComponent {
   handlePageEvent(event: PageEvent) {
     this.pageIndex.set(event.pageIndex);
     this.pageSize.set(event.pageSize);
+  }
+
+  // Replace broken images with a placeholder
+  onImgError(event: Event) {
+    const img = event.target as HTMLImageElement;
+    const fallback = 'https://placehold.co/300x200?text=No+Image';
+    if (img && img.src !== fallback) {
+      img.src = fallback;
+    }
+  }
+
+  // Normalize DB-stored image paths to browser-usable URLs
+  toImageUrl(raw: string | null | undefined): string {
+    const fallback = 'https://placehold.co/300x200?text=No+Image';
+    if (!raw) return fallback;
+
+    // Already absolute HTTP(S)
+    if (raw.startsWith('http://') || raw.startsWith('https://')) return raw;
+
+    // Frontend asset path
+    if (raw.startsWith('/assets/') || raw.startsWith('assets/')) {
+      return raw.startsWith('/') ? raw : `/${raw}`;
+    }
+
+    // Common backend-relative paths like "static/..." → map to backend base
+    // Keep any leading slash handling consistent
+    if (raw.startsWith('/static/') || raw.startsWith('static/')) {
+      const path = raw.startsWith('/') ? raw : `/${raw}`;
+      return `${environment.apiBaseUrl}${path}`;
+    }
+
+    // Fallback: treat as filename and serve from backend static root
+    const filename = raw.split('/').pop() ?? raw;
+    return `${environment.apiBaseUrl}/static/${filename}`;
   }
 }

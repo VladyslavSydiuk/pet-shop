@@ -1,0 +1,19 @@
+.stars {
+  display: inline-flex;
+  gap: 4px;
+}
+.star {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font-size: 22px;
+  line-height: 1;
+  color: #ccc;
+}
+.star.filled {
+  color: #ffb400; /* amber */
+}
+.star:disabled {
+  cursor: default;
+}

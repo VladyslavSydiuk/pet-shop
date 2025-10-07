@@ -1,14 +1,47 @@
-<div class="product-detail-container">
+<div class="product-detail-container" *ngIf="product() as p">
   <mat-card>
     <mat-card-header>
-      <mat-card-title>Product Details</mat-card-title>
+      <mat-card-title>{{ p.productName }}</mat-card-title>
+      <mat-card-subtitle>{{ p.category?.name }} • {{ p.price }} грн</mat-card-subtitle>
     </mat-card-header>
+    <img mat-card-image [src]="toImageUrl(p.avatarUrl)" [alt]="p.productName">
     <mat-card-content>
-      <p>Product ID: {{ productId }}</p>
-      <!-- Add more product details here -->
+      <p>{{ p.productDescription }}</p>
     </mat-card-content>
     <mat-card-actions>
-      <button mat-button (click)="goBack()">Back</button>
+      <button mat-stroked-button color="primary" (click)="goBack()">Назад</button>
     </mat-card-actions>
   </mat-card>
+
+  <!-- Reviews -->
+  <section class="reviews">
+    <h3>Відгуки</h3>
+    <div *ngIf="reviews().length === 0" class="muted">Ще немає відгуків</div>
+    <ul class="review-list">
+      <li *ngFor="let r of reviews()" class="review-item">
+        <div class="review-header">
+          <strong>{{ r.userName || 'Anonymous' }}</strong>
+          <app-star-rating [value]="r.rating" [readonly]="true"></app-star-rating>
+        </div>
+        <div class="review-comment">{{ r.comment }}</div>
+        <div class="review-date muted">{{ r.createdAt | date:'medium' }}</div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Add review -->
+  <section class="add-review">
+    <h3>Додати відгук</h3>
+    <div class="rating-row">
+      <label>Оцінка:</label>
+      <app-star-rating [value]="newRating()" (rated)="newRating.set($event)"></app-star-rating>
+    </div>
+    <mat-form-field class="full" appearance="fill">
+      <mat-label>Коментар</mat-label>
+      <textarea matInput rows="4" [ngModel]="newComment()" (ngModelChange)="newComment.set($event)"></textarea>
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="submitReview()" [disabled]="submitting() || newRating() < 1">Надіслати</button>
+  </section>
 </div>
+
+<div *ngIf="!product()" class="muted">Завантаження...</div>

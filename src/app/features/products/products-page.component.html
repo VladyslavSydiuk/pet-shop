@@ -44,11 +44,21 @@
         <li *ngFor="let product of filteredProducts()">
           <div class="product-card" @fadeIn>
             <h3 class="product-title">{{ product.productName }}</h3>
+            <img
+              class="product-image"
+              [src]="toImageUrl(product.avatarUrl)"
+              [alt]="product.productName"
+              loading="lazy"
+              (error)="onImgError($event)"
+            />
             <div class="product-info">
               <span class="price">{{ product.price }} грн</span>
               <span class="rating">⭐⭐⭐⭐☆</span>
             </div>
-            <button mat-raised-button color="primary">Купити</button>
+            <div class="actions">
+              <button mat-raised-button color="primary">Купити</button>
+              <button mat-stroked-button color="accent" [routerLink]="['/product', product.id]">Деталі</button>
+            </div>
           </div>
         </li>
       </ul>

@@ -1,28 +1,83 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, computed, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { MaterialModule } from '../../shared/material.module';
+import { ProductService } from '../../core/services/product.service';
+import { ReviewService } from '../../core/services/review.service';
+import { Product } from '../../core/models/product.model';
+import { Review } from '../../core/models/review.model';
+import { StarRatingComponent } from '../../shared/components/star-rating/star-rating.component';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-product-detail-page',
   standalone: true,
-  imports: [CommonModule, MaterialModule],
+  imports: [CommonModule, MaterialModule, FormsModule, StarRatingComponent],
   templateUrl: './product-detail-page.component.html',
   styleUrl: './product-detail-page.component.scss',
 })
 export class ProductDetailPageComponent implements OnInit {
-  productId: string | null = null;
+  private route = inject(ActivatedRoute);
+  private productService = inject(ProductService);
+  private reviewService = inject(ReviewService);
 
+  productId = signal<number | null>(null);
+  product = signal<Product | null>(null);
+  reviews = signal<Review[]>([]);
 
-
-  constructor(private route: ActivatedRoute) {}
+  // form state
+  newRating = signal<number>(0);
+  newComment = signal<string>('');
+  submitting = signal<boolean>(false);
 
   ngOnInit(): void {
-    this.productId = this.route.snapshot.paramMap.get('id');
-    // Here you would typically fetch the product details using the ID
+    const idParam = this.route.snapshot.paramMap.get('id');
+    const id = idParam ? Number(idParam) : null;
+    this.productId.set(id);
+    if (id != null) {
+      this.loadProduct(id);
+      this.loadReviews(id);
+    }
   }
 
-  goBack(): void {
-    window.history.back();
+  private loadProduct(id: number) {
+    this.productService.getProductById(id).subscribe(p => this.product.set(p));
   }
+
+  private loadReviews(id: number) {
+    this.reviewService.getReviews(id).subscribe(list => this.reviews.set(list));
+  }
+
+  submitReview() {
+    const id = this.productId();
+    if (id == null) return;
+    const rating = this.newRating();
+    const comment = this.newComment().trim();
+    if (!rating || rating < 1) return;
+    this.submitting.set(true);
+    this.reviewService.addReview(id, { rating, comment }).subscribe({
+      next: (created) => {
+        this.reviews.set([created, ...this.reviews()]);
+        this.newRating.set(0);
+        this.newComment.set('');
+      },
+      complete: () => this.submitting.set(false),
+      error: () => this.submitting.set(false)
+    });
+  }
+
+  toImageUrl(raw: string | null | undefined): string {
+    if (!raw) return 'https://placehold.co/600x400?text=No+Image';
+    if (raw.startsWith('http://') || raw.startsWith('https://')) return raw;
+    if (raw.startsWith('/assets/') || raw.startsWith('assets/')) return raw.startsWith('/') ? raw : `/${raw}`;
+    if (raw.startsWith('/static/') || raw.startsWith('static/')) {
+      const path = raw.startsWith('/') ? raw : `/${raw}`;
+      return `${environment.apiBaseUrl}${path}`;
+    }
+    const filename = raw.split('/').pop() ?? raw;
+    return `${environment.apiBaseUrl}/static/${filename}`;
+  }
+
+  goBack(): void { window.history.back(); }
 }

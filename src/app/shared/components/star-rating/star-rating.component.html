@@ -1,0 +1,16 @@
+<div class="stars" role="radiogroup" aria-label="Star rating">
+  <button
+    *ngFor="let s of stars()"
+    class="star"
+    type="button"
+    [class.filled]="s <= displayValue()"
+    (mouseenter)="onMouseEnter(s)"
+    (mouseleave)="onMouseLeave()"
+    (click)="setRating(s)"
+    [attr.aria-checked]="s === value"
+    [disabled]="readonly"
+    [attr.aria-label]="'Rate ' + s + ' out of ' + max"
+  >
+    ★
+  </button>
+</div>
