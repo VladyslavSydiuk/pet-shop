@@ -11,6 +11,10 @@
         </mat-form-field>
       </div>
       <div class="header-actions">
+        <div class="user-info" *ngIf="username || email" style="margin-right: 12px; text-align: right;">
+          <div class="mat-body-2">{{ username || 'User' }}</div>
+          <div class="mat-caption" *ngIf="email">{{ email }}</div>
+        </div>
         <button mat-stroked-button color="warn" (click)="logout()">Logout</button>
       </div>
     </div>
@@ -53,7 +57,10 @@
             />
             <div class="product-info">
               <span class="price">{{ product.price }} грн</span>
-              <span class="rating">⭐⭐⭐⭐☆</span>
+              <ng-container *ngIf="getRatingSummary(product.id) | async as rs">
+                <app-star-rating [value]="rs.avg" [readonly]="true"></app-star-rating>
+                <span class="rating-count">({{ rs.count }})</span>
+              </ng-container>
             </div>
             <div class="actions">
               <button mat-raised-button color="primary">Купити</button>

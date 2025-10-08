@@ -18,10 +18,13 @@ import { switchMap, tap, debounceTime } from 'rxjs/operators';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { AuthService } from '../../core/services/auth.service';
 import { environment } from '../../../environments/environment';
+import { RatingService, RatingSummary } from '../../core/services/rating.service';
+import { StarRatingComponent } from '../../shared/components/star-rating/star-rating.component';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-products-page',
-  imports: [CommonModule, MaterialModule, MatSelectModule, FormsModule, MatPaginatorModule, RouterModule],
+  imports: [CommonModule, MaterialModule, MatSelectModule, FormsModule, MatPaginatorModule, RouterModule, StarRatingComponent],
   templateUrl: './products-page.component.html',
   styleUrl: './products-page.component.scss',
   animations: [
@@ -37,6 +40,11 @@ export class ProductsPageComponent {
   private productService = inject(ProductService);
   private categoryService = inject(CategoryService);
   private authService = inject(AuthService);
+  private ratingService = inject(RatingService);
+
+  // Current user display info
+  username = this.authService.getCurrentUsername();
+  email = this.authService.getCurrentEmail();
 
   // Property for ngModel binding
   searchValue = '';
@@ -138,5 +146,10 @@ export class ProductsPageComponent {
     // Fallback: treat as filename and serve from backend static root
     const filename = raw.split('/').pop() ?? raw;
     return `${environment.apiBaseUrl}/static/${filename}`;
+  }
+
+  // Expose rating summary observable for templates (shared replayed in service)
+  getRatingSummary(productId: number): Observable<RatingSummary> {
+    return this.ratingService.getSummary(productId);
   }
 }

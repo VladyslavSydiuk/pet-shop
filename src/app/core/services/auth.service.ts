@@ -69,4 +69,42 @@ export class AuthService {
   isAuthenticated(): boolean {
     return !!this.getToken();
   }
+
+  // Extract username from JWT without verifying signature (for display/client headers only)
+  getCurrentUsername(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+    try {
+      const payload = this.decodeJwtPayload(token);
+      // Common claims: 'sub', 'username', 'preferred_username'
+      return (payload['username'] || payload['preferred_username'] || payload['sub'] || null) as string | null;
+    } catch {
+      return null;
+    }
+  }
+
+  // Extract email from JWT if present
+  getCurrentEmail(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+    try {
+      const payload = this.decodeJwtPayload(token);
+      return (payload['email'] || null) as string | null;
+    } catch {
+      return null;
+    }
+  }
+
+  private decodeJwtPayload(token: string): Record<string, unknown> {
+    const parts = token.split('.');
+    if (parts.length < 2) throw new Error('Invalid JWT');
+    const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const decoded = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(decoded);
+  }
 }
