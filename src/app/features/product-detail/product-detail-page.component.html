@@ -2,13 +2,35 @@
   <mat-card>
     <mat-card-header>
       <mat-card-title>{{ p.productName }}</mat-card-title>
-      <mat-card-subtitle>{{ p.category?.name }} • {{ p.price }} грн</mat-card-subtitle>
+      <mat-card-subtitle>
+        {{ p.category?.name }} • {{ p.price }} грн
+        <span
+          class="status-badge"
+          [ngStyle]="{
+            'background': (p.productStatus === 'AVAILABLE' ? '#e6f4ea' : (p.productStatus === 'UNAVAILABLE' ? '#fdecea' : '#eef2ff')),
+            'color': (p.productStatus === 'AVAILABLE' ? '#137333' : (p.productStatus === 'UNAVAILABLE' ? '#b3261e' : '#1a1a9b')),
+            'padding': '2px 8px', 'border-radius': '12px', 'margin-left': '8px', 'font-size': '12px'
+          }"
+        >
+          {{ p.productStatus || (p.stock === 0 ? 'UNAVAILABLE' : 'AVAILABLE') }}
+        </span>
+        <span class="stock" style="margin-left: 8px; font-size: 12px;">
+          <ng-container *ngIf="p.stock !== undefined; else noStock">
+            <ng-container *ngIf="p.stock as s">
+              <span *ngIf="s > 0; else outOfStock">: {{ s }}</span>
+            </ng-container>
+          </ng-container>
+          <ng-template #noStock></ng-template>
+          <ng-template #outOfStock></ng-template>
+        </span>
+      </mat-card-subtitle>
     </mat-card-header>
     <img mat-card-image [src]="toImageUrl(p.avatarUrl)" [alt]="p.productName">
     <mat-card-content>
       <p>{{ p.productDescription }}</p>
     </mat-card-content>
     <mat-card-actions>
+      <button mat-raised-button color="primary" [disabled]="p.stock === 0 || p.productStatus === 'UNAVAILABLE'">Купити</button>
       <button mat-stroked-button color="primary" (click)="goBack()">Назад</button>
     </mat-card-actions>
   </mat-card>

@@ -79,5 +79,11 @@ export class ProductDetailPageComponent implements OnInit {
     return `${environment.apiBaseUrl}/static/${filename}`;
   }
 
+  isBuyEnabled(p: Product): boolean {
+    const statusOk = !p.productStatus || p.productStatus === 'AVAILABLE';
+    const stockOk = p.stock == null || p.stock > 0;
+    return statusOk && stockOk;
+  }
+
   goBack(): void { window.history.back(); }
 }

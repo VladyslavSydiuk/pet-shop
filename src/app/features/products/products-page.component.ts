@@ -152,4 +152,11 @@ export class ProductsPageComponent {
   getRatingSummary(productId: number): Observable<RatingSummary> {
     return this.ratingService.getSummary(productId);
   }
+
+  // Buy button enabled if: status is AVAILABLE or missing, and stock is null/undefined or > 0
+  isBuyEnabled(p: Product): boolean {
+    const statusOk = !p.productStatus || p.productStatus === 'AVAILABLE';
+    const stockOk = p.stock == null || p.stock > 0;
+    return statusOk && stockOk;
+  }
 }

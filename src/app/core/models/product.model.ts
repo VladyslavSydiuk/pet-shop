@@ -9,5 +9,7 @@ export interface Product {
   productDescription: string;
   category: Category;
   avatarUrl: string;
+  productStatus?: 'AVAILABLE' | 'UNAVAILABLE' | 'PENDING' | string;
+  stock?: number;
 }
 

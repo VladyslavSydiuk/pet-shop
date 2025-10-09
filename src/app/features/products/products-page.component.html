@@ -44,6 +44,11 @@
 
     <!-- Список товарів -->
     <main class="product-area">
+      <div class="category-summary" style="padding: 12px 16px;">
+        <strong>{{ selectedCategory() || 'Усі' }}</strong>
+        <span> — {{ totalItems() }} товарів</span>
+        <span *ngIf="searchQuery()"> • пошук: "{{ searchQuery() }}"</span>
+      </div>
       <ul class="product-list">
         <li *ngFor="let product of filteredProducts()">
           <div class="product-card" @fadeIn>
@@ -61,9 +66,30 @@
                 <app-star-rating [value]="rs.avg" [readonly]="true"></app-star-rating>
                 <span class="rating-count">({{ rs.count }})</span>
               </ng-container>
+              <span
+                class="status-badge"
+                [ngStyle]="{
+                  'background': (product.productStatus === 'AVAILABLE' ? '#e6f4ea' : (product.productStatus === 'UNAVAILABLE' ? '#fdecea' : '#eef2ff')),
+                  'color': (product.productStatus === 'AVAILABLE' ? '#137333' : (product.productStatus === 'UNAVAILABLE' ? '#b3261e' : '#1a1a9b')),
+                  'padding': '2px 8px', 'border-radius': '12px', 'margin-left': '8px', 'font-size': '12px'
+                }"
+              >
+                {{ product.productStatus || (product.stock === 0 ? 'UNAVAILABLE' : 'AVAILABLE') }}
+              </span>
+              <span class="stock" style="margin-left: 8px; font-size: 12px;">
+                <ng-container *ngIf="product.stock !== undefined; else noStock">
+                  <ng-container *ngIf="product.stock as s">
+                    <span *ngIf="s > 0; else outOfStock">В наявності: {{ s }}</span>
+                  </ng-container>
+                </ng-container>
+                <ng-template #noStock></ng-template>
+                <ng-template #outOfStock>Немає в наявності</ng-template>
+              </span>
             </div>
             <div class="actions">
-              <button mat-raised-button color="primary">Купити</button>
+              <button mat-raised-button color="primary"
+                      [disabled]="!isBuyEnabled(product)"
+              >Купити</button>
               <button mat-stroked-button color="accent" [routerLink]="['/product', product.id]">Деталі</button>
             </div>
           </div>
