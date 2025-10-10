@@ -1,9 +1,9 @@
-<div class="product-detail-container" *ngIf="product() as p">
+  <div class="product-detail-container" *ngIf="product() as p">
   <mat-card>
     <mat-card-header>
       <mat-card-title>{{ p.productName }}</mat-card-title>
       <mat-card-subtitle>
-        {{ p.category?.name }} • {{ p.price }} грн
+        {{ p.category.name }} • {{ p.price }} грн
         <span
           class="status-badge"
           [ngStyle]="{

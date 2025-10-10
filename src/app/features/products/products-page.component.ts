@@ -1,4 +1,4 @@
-import {Component, computed, inject, signal} from '@angular/core';
+import {Component, computed, effect, inject, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {MaterialModule} from '../../shared/material.module';
 import {ProductService} from '../../core/services/product.service';
@@ -21,6 +21,7 @@ import { environment } from '../../../environments/environment';
 import { RatingService, RatingSummary } from '../../core/services/rating.service';
 import { StarRatingComponent } from '../../shared/components/star-rating/star-rating.component';
 import { Observable } from 'rxjs';
+import { SearchService } from '../../core/services/search.service';
 
 @Component({
   selector: 'app-products-page',
@@ -41,16 +42,17 @@ export class ProductsPageComponent {
   private categoryService = inject(CategoryService);
   private authService = inject(AuthService);
   private ratingService = inject(RatingService);
+  protected search = inject(SearchService);
 
   // Current user display info
   username = this.authService.getCurrentUsername();
   email = this.authService.getCurrentEmail();
 
   // Property for ngModel binding
-  searchValue = '';
+  // moved to shared SearchService
 
   // Signal for reactivity
-  searchQuery = signal('');
+  // use shared SearchService signal
 
   // Pagination signals
   pageIndex = signal(0);
@@ -62,12 +64,18 @@ export class ProductsPageComponent {
 
   categories = toSignal(this.categoryService.getUniqueCategories(), {initialValue: []});
 
+  // Reset to first page when the global search query changes (from shared header)
+  private readonly _resetOnSearchChange = effect(() => {
+    const _q = this.search.searchQuery();
+    this.pageIndex.set(0);
+  });
+
   // Create a computed signal that depends on pagination, search, and category values
   paginationParams = computed(() => ({
     page: this.pageIndex(),
     size: this.pageSize(),
     categoryName: this.selectedCategory() || 'all',
-    searchTerm: this.searchQuery() // Додаємо пошуковий запит в параметри
+    searchTerm: this.search.searchQuery() // Додаємо пошуковий запит в параметри
   }));
 
   // Use the computed signal as a dependency to automatically refetch when any parameter changes
@@ -102,11 +110,8 @@ export class ProductsPageComponent {
     this.pageIndex.set(0);
   }
 
-  updateSearchQuery(query: string) {
-    this.searchQuery.set(query);
-    // Reset to first page when search query changes
-    this.pageIndex.set(0);
-  }
+  // search query now updated via shared header; reset page when it changes
+  // Consumers can watch search.searchQuery() changes to reset page if needed elsewhere
 
   // Handler for pagination events
   handlePageEvent(event: PageEvent) {

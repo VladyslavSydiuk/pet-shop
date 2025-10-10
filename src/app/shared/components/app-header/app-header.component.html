@@ -1,0 +1,24 @@
+<header class="app-header">
+  <div class="container">
+    <div class="header-top">
+      <h1>Marketplace</h1>
+
+      <div class="search-container">
+        <mat-form-field class="search-field" appearance="fill">
+          <mat-label>Пошук товару</mat-label>
+          <input matInput [ngModel]="search.searchValue()" (ngModelChange)="search.setSearch($event)" (keyup.enter)="goToProducts()" placeholder="Введіть назву">
+          <button mat-icon-button matSuffix aria-label="Search" (click)="goToProducts()">
+            <mat-icon>search</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+      <div class="header-actions">
+        <div class="user-info" *ngIf="username || email" style="margin-right: 12px; text-align: right;">
+          <div class="mat-body-2">{{ username || 'User' }}</div>
+          <div class="mat-caption" *ngIf="email">{{ email }}</div>
+        </div>
+        <button mat-stroked-button color="warn" (click)="logout()">Logout</button>
+      </div>
+    </div>
+  </div>
+</header>
