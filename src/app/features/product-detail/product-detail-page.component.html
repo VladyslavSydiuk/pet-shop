@@ -30,7 +30,7 @@
       <p>{{ p.productDescription }}</p>
     </mat-card-content>
     <mat-card-actions>
-      <button mat-raised-button color="primary" [disabled]="p.stock === 0 || p.productStatus === 'UNAVAILABLE'">Купити</button>
+      <button mat-raised-button color="primary" [disabled]="p.stock === 0 || p.productStatus === 'UNAVAILABLE'" (click)="addToCart(p)">В кошик</button>
       <button mat-stroked-button color="primary" (click)="goBack()">Назад</button>
     </mat-card-actions>
   </mat-card>

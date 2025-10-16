@@ -68,7 +68,8 @@
             <div class="actions">
               <button mat-raised-button color="primary"
                       [disabled]="!isBuyEnabled(product)"
-              >Купити</button>
+                      (click)="addToCart(product)"
+              >В кошик</button>
               <button mat-stroked-button color="accent" [routerLink]="['/product', product.id]">Деталі</button>
             </div>
           </div>

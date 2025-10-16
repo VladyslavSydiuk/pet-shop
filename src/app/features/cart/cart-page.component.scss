@@ -1,0 +1,13 @@
+.cart-container { padding: 16px; }
+.empty { color: #666; }
+.cart-content { display: grid; grid-template-columns: 1fr; gap: 16px; }
+.cart-table { width: 100%; border-collapse: collapse; }
+.cart-table th, .cart-table td { padding: 8px; border-bottom: 1px solid #eee; vertical-align: middle; }
+.cart-table th { text-align: left; }
+.cart-table thead th:first-child { padding-left: calc(8px + 80px + 12px); }
+.cart-table .prod { display: flex; align-items: center; gap: 12px; }
+.cart-table .prod img { width: 80px; height: 60px; object-fit: cover; border-radius: 4px; background: #f4f4f4; }
+.cart-table .prod .name { font-weight: 600; }
+.qty { display: inline-flex; align-items: center; gap: 8px; }
+.summary { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; }
+.summary .actions { display: flex; gap: 8px; }

@@ -9,6 +9,7 @@ import { Product } from '../../core/models/product.model';
 import { Review } from '../../core/models/review.model';
 import { StarRatingComponent } from '../../shared/components/star-rating/star-rating.component';
 import { environment } from '../../../environments/environment';
+import { CartService } from '../../core/services/cart.service';
 
 @Component({
   selector: 'app-product-detail-page',
@@ -21,6 +22,7 @@ export class ProductDetailPageComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private productService = inject(ProductService);
   private reviewService = inject(ReviewService);
+  private cart = inject(CartService);
 
   productId = signal<number | null>(null);
   product = signal<Product | null>(null);
@@ -83,6 +85,11 @@ export class ProductDetailPageComponent implements OnInit {
     const statusOk = !p.productStatus || p.productStatus === 'AVAILABLE';
     const stockOk = p.stock == null || p.stock > 0;
     return statusOk && stockOk;
+  }
+
+  addToCart(p: Product) {
+    if (!this.isBuyEnabled(p)) return;
+    this.cart.add(p, 1);
   }
 
   goBack(): void { window.history.back(); }

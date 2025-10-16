@@ -28,6 +28,15 @@
   font-size: 1.8rem;
 }
 
+.header-top .brand {
+  color: inherit;
+  text-transform: none;
+  font: inherit;
+  padding: 0;
+  min-width: 0;
+  line-height: 1.2;
+}
+
 .search-container {
   display: flex;
   justify-content: center;
@@ -39,6 +48,11 @@
   display: flex;
   align-items: center;
   margin-left: 1rem;
+  gap: 12px;
+}
+
+.user-info {
+  text-align: right;
 }
 
 .search-field {
@@ -76,3 +90,4 @@
     }
   }
 }
+

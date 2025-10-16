@@ -14,6 +14,7 @@ import {
   animate
 } from '@angular/animations';
 import { Product } from '../../core/models/product.model';
+import { CartService } from '../../core/services/cart.service';
 import { switchMap, tap, debounceTime } from 'rxjs/operators';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { AuthService } from '../../core/services/auth.service';
@@ -43,6 +44,7 @@ export class ProductsPageComponent {
   private authService = inject(AuthService);
   private ratingService = inject(RatingService);
   protected search = inject(SearchService);
+  private cart = inject(CartService);
 
   // Current user display info
   username = this.authService.getCurrentUsername();
@@ -163,5 +165,10 @@ export class ProductsPageComponent {
     const statusOk = !p.productStatus || p.productStatus === 'AVAILABLE';
     const stockOk = p.stock == null || p.stock > 0;
     return statusOk && stockOk;
+  }
+
+  addToCart(p: Product) {
+    if (!this.isBuyEnabled(p)) return;
+    this.cart.add(p, 1);
   }
 }

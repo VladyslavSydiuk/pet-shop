@@ -1,0 +1,54 @@
+<div class="cart-container">
+  <h2>Кошик</h2>
+
+  <div *ngIf="count() === 0" class="empty">
+    Кошик порожній. <a routerLink="/products">Перейти до товарів</a>
+  </div>
+
+  <div *ngIf="count() > 0" class="cart-content">
+    <table class="cart-table">
+      <thead>
+        <tr>
+          <th>Товар</th>
+          <th>Ціна</th>
+          <th>Кількість</th>
+          <th>Сума</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let it of items()">
+          <td class="prod">
+            <img [src]="toImageUrl(it.product.avatarUrl)" alt="{{ it.product.productName }}" (error)="onImgError($event)">
+            <div>
+              <div class="name">{{ it.product.productName }}</div>
+              <div class="desc">{{ it.product.productDescription }}</div>
+            </div>
+          </td>
+          <td>{{ it.product.price | number:'1.2-2' }} грн</td>
+          <td>
+            <div class="qty">
+              <button mat-icon-button (click)="dec(it.product.id)"><mat-icon>remove</mat-icon></button>
+              <span>{{ it.quantity }}</span>
+              <button mat-icon-button (click)="inc(it.product.id)"><mat-icon>add</mat-icon></button>
+            </div>
+          </td>
+          <td>{{ (it.product.price * it.quantity) | number:'1.2-2' }} грн</td>
+          <td>
+            <button mat-icon-button color="warn" (click)="remove(it.product.id)"><mat-icon>delete</mat-icon></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="summary">
+      <div>Всього товарів: <strong>{{ count() }}</strong></div>
+      <div>Сума: <strong>{{ total() | number:'1.2-2' }} грн</strong></div>
+      <div class="actions">
+        <button mat-stroked-button color="warn" (click)="clear()">Очистити</button>
+        <button mat-raised-button color="primary" (click)="checkout()">Оформити замовлення</button>
+      </div>
+    </div>
+  </div>
+</div>
+
